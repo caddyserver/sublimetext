@@ -1,0 +1,94 @@
+%YAML 1.2
+---
+name: Caddyfile
+file_extensions: [Caddyfile]
+scope: source.Caddyfile
+
+variables:
+    directive: "^\\s*(\\w+)\\b"
+    key: "[\\w_.:/-]+"
+
+contexts:
+  prototype:
+    - include: comments
+    - include: trailing_spaces
+    - include: extra_spaces
+
+  main:
+    - match: (^\s*import) (.*)
+      captures:
+        1: support.function.Caddyfile
+        2: source.Caddyfile
+    - include: keys
+
+  comments:
+    - match: "#.*"
+      scope: comment.line.Caddyfile
+
+  trailing_spaces:
+    - match: "[ \\t]+$"
+      scope: invalid.illegal.trailing-spaces.Caddyfile
+  
+  extra_spaces:
+    - match: "\\s([ \\t]+){$"
+      captures:
+        1: invalid.illegal.extra-spaces.Caddyfile
+
+  server_block_common:
+    - include: brackets
+    - include: placeholders
+    - match: '"'
+      push: string
+
+  brackets:
+    - match: "\\s+{$"
+      scope: punctuation.definition.bracket.Caddyfile
+      push: nested_block
+    - match: "^\\s*}$"
+      scope: punctuation.definition.bracket.Caddyfile
+      pop: true
+
+  placeholders:
+    - include: env_placeholders
+    - match: "\\{>?\\w+\\}"
+      scope: constant.language.Caddyfile
+
+  env_placeholders:
+    - match: "\\{(\\$\\w+|%\\w+%)\\}"
+      scope: constant.language.Caddyfile
+
+  keys:
+    - include: env_placeholders
+    - match: "({{key}})$"
+      captures:
+        1: variable.other.Caddyfile
+      set: server_block
+    - match: "{{key}}"
+      scope: variable.other.Caddyfile
+    - match: ","
+      scope: keyword.operator.logical.Caddyfile
+    - match: "\\s{$"
+      scope: punctuation.definition.bracket.Caddyfile
+      set: server_block
+
+  server_block:
+    - match: "{{directive}}"
+      captures:
+        1: support.function.Caddyfile
+    - include: server_block_common
+
+  nested_block:
+    - match: "{{directive}}"
+      captures:
+        1: keyword.other.Caddyfile
+    - include: server_block_common
+
+  string:
+   - meta_include_prototype: false
+   - meta_scope: string.quoted.double.Caddyfile
+   - include: placeholders
+   - match: \\.
+     scope: constant.character.escape.Caddyfile
+   - match: '"'
+     pop: true
+
