@@ -5,8 +5,8 @@ file_extensions: [Caddyfile]
 scope: source.Caddyfile
 
 variables:
-    directive: "^\\s*(\\w+)\\b"
-    key: "[\\w_.:/-]+"
+  directive: "^\\s*(\\w+)\\b"
+  key: "[\\w_.:/-]+"
 
 contexts:
   prototype:
@@ -84,11 +84,11 @@ contexts:
     - include: server_block_common
 
   string:
-   - meta_include_prototype: false
-   - meta_scope: string.quoted.double.Caddyfile
-   - include: placeholders
-   - match: \\.
-     scope: constant.character.escape.Caddyfile
-   - match: '"'
-     pop: true
+    - meta_include_prototype: false
+    - meta_scope: string.quoted.double.Caddyfile
+    - include: placeholders
+    - match: \\.
+      scope: constant.character.escape.Caddyfile
+    - match: '"'
+      pop: true
 
