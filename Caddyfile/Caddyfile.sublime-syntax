@@ -5,7 +5,7 @@ file_extensions: [Caddyfile]
 scope: source.Caddyfile
 
 variables:
-  directive: "^\\s*(\\w+)\\b"
+  directive: ^\s*([\w-]+)\b
   key: "[\\w_.:/-]+"
 
 contexts:
@@ -28,7 +28,7 @@ contexts:
   trailing_spaces:
     - match: "[ \\t]+$"
       scope: invalid.illegal.trailing-spaces.Caddyfile
-  
+
   extra_spaces:
     - match: "\\s([ \\t]+){$"
       captures:
