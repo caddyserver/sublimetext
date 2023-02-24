@@ -72,6 +72,7 @@ contexts:
       set: server_block
 
   server_block:
+    - include: matcher
     - match: "{{directive}}"
       captures:
         1: support.function.Caddyfile
@@ -92,3 +93,6 @@ contexts:
     - match: '"'
       pop: true
 
+  matcher:
+    - match: "(?<!\\w)@\\w+"
+      scope: entity.name.matcher.Caddyfile
